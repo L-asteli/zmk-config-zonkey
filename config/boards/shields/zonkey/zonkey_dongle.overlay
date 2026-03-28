@@ -1,11 +1,4 @@
-#include <dt-bindings/zmk/matrix_transform.h>
+#include "zonkey.dtsi"
 
 / {
-    chosen {
-        zmk,kscan = &mock_kscan;
-    };
-
-    mock_kscan: kscan {
-        compatible = "zmk,kscan-mock";
-    };
 };
