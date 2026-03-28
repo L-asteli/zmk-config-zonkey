@@ -68,11 +68,13 @@ jobs:
               cp "${BUILD_DIR}/zephyr/zmk.bin" artifacts/${ARTIFACT}.bin
             fi
 
-            # UF2
-            if [ -f "${BUILD_DIR}/zephyr/zmk.uf2" ]; then
-              cp "${BUILD_DIR}/zephyr/zmk.uf2" artifacts/${ARTIFACT}.uf2
+            # --- UF2（左右用） ---
+            UF2_FILE=$(find "${BUILD_DIR}" -type f -name "*.uf2" | head -n 1)
+            if [ -n "${UF2_FILE}" ]; then
+              cp "${UF2_FILE}" "artifacts/${ARTIFACT}.uf2"
+              echo "Copied UF2: ${UF2_FILE}"
             fi
-
+            
             # ELF（デバッグ）
             if [ -f "${BUILD_DIR}/zephyr/zephyr.elf" ]; then
               cp "${BUILD_DIR}/zephyr/zephyr.elf" artifacts/${ARTIFACT}.elf
