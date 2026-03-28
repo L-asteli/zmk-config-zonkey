@@ -1,4 +1,10 @@
 #include <dt-bindings/zmk/matrix_transform.h>
 
 / {
+    kscan {
+        compatible = "zmk,kscan-gpio-direct";
+        label = "KSCAN";
+
+        input-gpios = <&gpio0 11 (GPIO_ACTIVE_LOW)>;
+    };
 };
