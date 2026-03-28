@@ -3,4 +3,21 @@ if SHIELD_ZONKEY_DONGLE
 config ZMK_KEYBOARD_NAME
     default "zonkey_dongle"
 
+config ZMK_SPLIT
+    default y
+
+config ZMK_SPLIT_ROLE_CENTRAL
+    default y
+
+# 2つのペリフェラル（左右）に接続
+config ZMK_SPLIT_BLE_CENTRAL_PERIPHERALS
+    default 2
+
+# BLEプロファイル数（デフォルト5） + ペリフェラル数（2） = 7
+config BT_MAX_CONN
+    default 7
+
+config BT_MAX_PAIRED
+    default 7
+
 endif
