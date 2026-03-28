@@ -2,7 +2,6 @@ name: Build ZMK Firmware
 
 on:
   push:
-  pull_request:
   workflow_dispatch:
 
 jobs:
@@ -13,16 +12,32 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Zephyr
-        uses: zmkfirmware/zmk/.github/actions/setup-zephyr@main
+      # Zephyr環境セットアップ
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            git cmake ninja-build gperf \
+            ccache dfu-util device-tree-compiler \
+            wget python3-pip python3-setuptools python3-wheel \
+            xz-utils file make gcc gcc-multilib g++-multilib \
+            libsdl2-dev libmagic1
 
-      - name: Build firmware
+      - name: Install west
+        run: pip install west
+
+      - name: Init west
         run: |
           west init -l config
           west update
           west zephyr-export
 
-          mkdir -p build
+      - name: Install Python deps
+        run: pip install -r zephyr/scripts/requirements.txt
+
+      - name: Build firmware
+        run: |
+          mkdir -p build artifacts
 
           for conf in $(yq '.include[] | @base64' build.yaml); do
             _jq() {
@@ -41,26 +56,24 @@ jobs:
               -DZMK_CONFIG=${GITHUB_WORKSPACE}/config \
               -DSHIELD="${SHIELD}" ${ARGS}
 
-            mkdir -p artifacts
-
-            # --- UF2 ---
-            if [ -f "${BUILD_DIR}/zephyr/zmk.uf2" ]; then
-              cp "${BUILD_DIR}/zephyr/zmk.uf2" artifacts/${ARTIFACT}.uf2
-            fi
-
-            # --- BIN ---
-            if [ -f "${BUILD_DIR}/zephyr/zmk.bin" ]; then
-              cp "${BUILD_DIR}/zephyr/zmk.bin" artifacts/${ARTIFACT}.bin
-            fi
-
-            # --- HEX（重要追加） ---
+            # HEX
             if [ -f "${BUILD_DIR}/zephyr/zmk.hex" ]; then
               cp "${BUILD_DIR}/zephyr/zmk.hex" artifacts/${ARTIFACT}.hex
             elif [ -f "${BUILD_DIR}/zephyr/zephyr.hex" ]; then
               cp "${BUILD_DIR}/zephyr/zephyr.hex" artifacts/${ARTIFACT}.hex
             fi
 
-            # --- ELF（デバッグ用） ---
+            # BIN
+            if [ -f "${BUILD_DIR}/zephyr/zmk.bin" ]; then
+              cp "${BUILD_DIR}/zephyr/zmk.bin" artifacts/${ARTIFACT}.bin
+            fi
+
+            # UF2
+            if [ -f "${BUILD_DIR}/zephyr/zmk.uf2" ]; then
+              cp "${BUILD_DIR}/zephyr/zmk.uf2" artifacts/${ARTIFACT}.uf2
+            fi
+
+            # ELF（デバッグ）
             if [ -f "${BUILD_DIR}/zephyr/zephyr.elf" ]; then
               cp "${BUILD_DIR}/zephyr/zephyr.elf" artifacts/${ARTIFACT}.elf
             fi
