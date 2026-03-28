@@ -1,6 +1,74 @@
-name: Build ZMK firmware
-on: [push, pull_request, workflow_dispatch]
+name: Build ZMK Firmware
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   build:
-    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@v0.3
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Zephyr
+        uses: zmkfirmware/zmk/.github/actions/setup-zephyr@main
+
+      - name: Build firmware
+        run: |
+          west init -l config
+          west update
+          west zephyr-export
+
+          mkdir -p build
+
+          for conf in $(yq '.include[] | @base64' build.yaml); do
+            _jq() {
+              echo ${conf} | base64 --decode | jq -r ${1}
+            }
+
+            BOARD=$(_jq '.board')
+            SHIELD=$(_jq '.shield')
+            ARGS=$(_jq '.["cmake-args"] // ""')
+            ARTIFACT=$(_jq '.["artifact-name"] // "firmware"')
+
+            BUILD_DIR=build/${ARTIFACT}
+
+            echo "Building ${ARTIFACT}"
+            west build -s zmk/app -d ${BUILD_DIR} -b ${BOARD} -- \
+              -DZMK_CONFIG=${GITHUB_WORKSPACE}/config \
+              -DSHIELD="${SHIELD}" ${ARGS}
+
+            mkdir -p artifacts
+
+            # --- UF2 ---
+            if [ -f "${BUILD_DIR}/zephyr/zmk.uf2" ]; then
+              cp "${BUILD_DIR}/zephyr/zmk.uf2" artifacts/${ARTIFACT}.uf2
+            fi
+
+            # --- BIN ---
+            if [ -f "${BUILD_DIR}/zephyr/zmk.bin" ]; then
+              cp "${BUILD_DIR}/zephyr/zmk.bin" artifacts/${ARTIFACT}.bin
+            fi
+
+            # --- HEX（重要追加） ---
+            if [ -f "${BUILD_DIR}/zephyr/zmk.hex" ]; then
+              cp "${BUILD_DIR}/zephyr/zmk.hex" artifacts/${ARTIFACT}.hex
+            elif [ -f "${BUILD_DIR}/zephyr/zephyr.hex" ]; then
+              cp "${BUILD_DIR}/zephyr/zephyr.hex" artifacts/${ARTIFACT}.hex
+            fi
+
+            # --- ELF（デバッグ用） ---
+            if [ -f "${BUILD_DIR}/zephyr/zephyr.elf" ]; then
+              cp "${BUILD_DIR}/zephyr/zephyr.elf" artifacts/${ARTIFACT}.elf
+            fi
+
+          done
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware
+          path: artifacts/
