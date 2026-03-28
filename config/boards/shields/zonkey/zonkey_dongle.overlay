@@ -17,4 +17,18 @@
             RC(0,0)
         >;
     };
+
+    chosen {
+        zmk,physical-layout = &default_layout;
+    };
+
+    default_layout: physical_layout {
+        compatible = "zmk,physical-layout";
+
+        display-name = "Default";
+
+        keys = <
+            0 0
+        >;
+    };
 };
