@@ -1,0 +1,14 @@
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/bt.h>
+
+/ {
+    keymap {
+        compatible = "zmk,keymap";
+        
+        // ドングルはホスト役なので入力デバイスなし、レイアウト不要
+        default_layer {
+            bindings = <>;
+        };
+    };
+};

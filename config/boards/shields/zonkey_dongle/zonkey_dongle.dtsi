@@ -1,0 +1,9 @@
+/ {
+    chosen {
+        zmk,kscan = &kscan_none;
+    };
+
+    kscan_none: kscan_none {
+        compatible = "zmk,kscan-none";
+    };
+};
