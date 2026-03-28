@@ -1,0 +1,6 @@
+if SHIELD_ZONKEY_DONGLE
+
+config ZMK_KEYBOARD_NAME
+    default "zonkey_dongle"
+
+endif

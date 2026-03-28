@@ -5,10 +5,11 @@
 / {
     keymap {
         compatible = "zmk,keymap";
+        label = "Default keymap";
         
-        // ドングルはホスト役なので入力デバイスなし、レイアウト不要
         default_layer {
-            bindings = <>;
+            label = "Default";
+            bindings = < >;
         };
     };
 };
