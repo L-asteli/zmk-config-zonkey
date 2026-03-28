@@ -39,45 +39,47 @@ jobs:
         run: |
           mkdir -p build artifacts
 
-          for conf in $(yq '.include[] | @base64' build.yaml); do
-            _jq() {
-              echo ${conf} | base64 --decode | jq -r ${1}
-            }
+          COUNT=$(yq '.include | length' build.yaml)
 
-            BOARD=$(_jq '.board')
-            SHIELD=$(_jq '.shield')
-            ARGS=$(_jq '.["cmake-args"] // ""')
-            ARTIFACT=$(_jq '.["artifact-name"] // "firmware"')
+          for ((i=0; i<COUNT; i++)); do
+            BOARD=$(yq ".include[$i].board" build.yaml)
+            SHIELD=$(yq ".include[$i].shield" build.yaml)
+            ARGS=$(yq ".include[$i].cmake-args // \"\"" build.yaml)
+            ARTIFACT=$(yq ".include[$i].artifact-name // \"firmware\"" build.yaml)
 
             BUILD_DIR=build/${ARTIFACT}
 
+            echo "======================================"
             echo "Building ${ARTIFACT}"
+            echo "BOARD=${BOARD}"
+            echo "SHIELD=${SHIELD}"
+            echo "======================================"
+
             west build -s zmk/app -d ${BUILD_DIR} -b ${BOARD} -- \
               -DZMK_CONFIG=${GITHUB_WORKSPACE}/config \
               -DSHIELD="${SHIELD}" ${ARGS}
 
-            # HEX
-            if [ -f "${BUILD_DIR}/zephyr/zmk.hex" ]; then
-              cp "${BUILD_DIR}/zephyr/zmk.hex" artifacts/${ARTIFACT}.hex
-            elif [ -f "${BUILD_DIR}/zephyr/zephyr.hex" ]; then
-              cp "${BUILD_DIR}/zephyr/zephyr.hex" artifacts/${ARTIFACT}.hex
+            echo "==== FILE LIST (${ARTIFACT}) ===="
+            find "${BUILD_DIR}" -type f
+
+            # dongleのみhex
+            if [[ "$ARTIFACT" == "zonkey_dongle" ]]; then
+              HEX_FILE=$(find "${BUILD_DIR}" -name "*.hex" | head -n 1)
+
+              if [ -n "${HEX_FILE}" ]; then
+                cp "${HEX_FILE}" "artifacts/${ARTIFACT}.hex"
+                echo "Copied HEX: ${HEX_FILE}"
+              else
+                echo "ERROR: hex not found"
+                exit 1
+              fi
             fi
 
-            # BIN
-            if [ -f "${BUILD_DIR}/zephyr/zmk.bin" ]; then
-              cp "${BUILD_DIR}/zephyr/zmk.bin" artifacts/${ARTIFACT}.bin
-            fi
-
-            # --- UF2（左右用） ---
-            UF2_FILE=$(find "${BUILD_DIR}" -type f -name "*.uf2" | head -n 1)
+            # UF2（左右）
+            UF2_FILE=$(find "${BUILD_DIR}" -name "*.uf2" | head -n 1)
             if [ -n "${UF2_FILE}" ]; then
               cp "${UF2_FILE}" "artifacts/${ARTIFACT}.uf2"
               echo "Copied UF2: ${UF2_FILE}"
-            fi
-            
-            # ELF（デバッグ）
-            if [ -f "${BUILD_DIR}/zephyr/zephyr.elf" ]; then
-              cp "${BUILD_DIR}/zephyr/zephyr.elf" artifacts/${ARTIFACT}.elf
             fi
 
           done
