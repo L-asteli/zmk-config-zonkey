@@ -18,9 +18,28 @@
 #
 ---
 include:
-  - board: seeeduino_xiao_ble
-    shield: zonkey_R rgbled_adapter
+  # Dongle central
+  - board: raytac_mdbt50q_cx_40_dongle/nrf52840
+    shield: zonkey_dongle
+    artifact-name: zonkey_dongle
+
+  # Left peripheral
   - board: seeeduino_xiao_ble
     shield: zonkey_L rgbled_adapter
+    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
+    artifact-name: zonkey_left_peripheral
+
+  # Right peripheral (以前は central だったが peripheral に落とす)
+  - board: seeeduino_xiao_ble
+    shield: zonkey_R rgbled_adapter
+    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
+    artifact-name: zonkey_right_peripheral
+
+  # Settings reset
   - board: seeeduino_xiao_ble
     shield: settings_reset
+    artifact-name: settings_reset_xiao
+
+  - board: raytac_mdbt50q_cx_40_dongle/nrf52840
+    shield: settings_reset
+    artifact-name: settings_reset_raytac

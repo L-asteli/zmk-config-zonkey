@@ -20,3 +20,28 @@ config ZMK_SPLIT
     default y
 
 endif
+
+if SHIELD_ZONKEY_DONGLE
+
+config ZMK_KEYBOARD_NAME
+    default "zonkey_dongle"
+
+config ZMK_SPLIT
+    default y
+
+config ZMK_SPLIT_ROLE_CENTRAL
+    default y
+
+# 左右2台をぶら下げる
+config ZMK_SPLIT_BLE_CENTRAL_PERIPHERALS
+    default 2
+
+# 2 peripherals + BT profiles
+# 標準5プロファイルを維持するなら 7
+config BT_MAX_CONN
+    default 7
+
+config BT_MAX_PAIRED
+    default 7
+
+endif
