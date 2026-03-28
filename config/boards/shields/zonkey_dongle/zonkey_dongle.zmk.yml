@@ -1,0 +1,8 @@
+file_format: "1"
+id: zonkey_dongle
+name: zonkey_dongle
+type: shield
+url: https://github.com/kureyakey/zmk-config-zonkey
+requires: [nrf52840_mdk_usb_dongle]
+features:
+  - keys
