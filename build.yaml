@@ -19,7 +19,7 @@
 ---
 include:
   # Dongle central
-  - board: raytac_mdbt50q_cx_40_dongle/nrf52840
+  - board: nrf52840dongle_nrf52840
     shield: zonkey_dongle
     artifact-name: zonkey_dongle
 
@@ -40,6 +40,6 @@ include:
     shield: settings_reset
     artifact-name: settings_reset_xiao
 
-  - board: raytac_mdbt50q_cx_40_dongle/nrf52840
+  - board: nrf52840dongle_nrf52840
     shield: settings_reset
     artifact-name: settings_reset_raytac
