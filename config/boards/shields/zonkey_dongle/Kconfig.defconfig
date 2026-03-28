@@ -1,0 +1,25 @@
+if SHIELD_ZONKEY_DONGLE
+
+config ZMK_KEYBOARD_NAME
+	default "Zonkey Dongle"
+
+# Dongle acts as central for split keyboard
+config ZMK_SPLIT
+	default y
+
+config ZMK_SPLIT_ROLE_CENTRAL
+	default y
+
+# Number of peripheral keyboard halves
+config ZMK_SPLIT_BLE_CENTRAL_PERIPHERALS
+	default 2
+
+# Bluetooth connection limits
+# ZMK_SPLIT_BLE_CENTRAL_PERIPHERALS (2) + default BLE profiles (5) = 7
+config BT_MAX_CONN
+	default 7
+
+config BT_MAX_PAIRED
+	default 7
+
+endif

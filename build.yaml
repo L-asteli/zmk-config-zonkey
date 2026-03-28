@@ -18,9 +18,23 @@
 #
 ---
 include:
-  - board: seeeduino_xiao_ble
-    shield: zonkey_R rgbled_adapter
+  # Dongle (central) - RAYTAC MDBT50Q
+  - board: nrf52840_mdk_usb_dongle
+    shield: zonkey_dongle
+
+  # Left keyboard half (peripheral)
   - board: seeeduino_xiao_ble
     shield: zonkey_L rgbled_adapter
+    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
+
+  # Right keyboard half (peripheral)
+  - board: seeeduino_xiao_ble
+    shield: zonkey_R rgbled_adapter
+    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
+
+  # Settings reset for all devices
+  - board: nrf52840_mdk_usb_dongle
+    shield: settings_reset
+
   - board: seeeduino_xiao_ble
     shield: settings_reset
