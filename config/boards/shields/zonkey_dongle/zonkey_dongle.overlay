@@ -1,4 +1,5 @@
 #include "../zonkey/zonkey_layout.dtsi"
+#include "../zonkey/zonkey_pointing.dtsi"
 
 &physical_layout0 {
     transform = <&default_transform>;
@@ -7,7 +8,9 @@
 / {
     chosen {
         zmk,kscan = &mock_kscan;
+        zmk,matrix_transform = &default_transform;
         zmk,physical-layout = &physical_layout0;
+        zmk,input-split = &input_split;
     };
 
     mock_kscan: mock_kscan_0 {
@@ -27,4 +30,9 @@
             RC(3,0) RC(3,1) RC(3,2) RC(3,3) RC(3,4) RC(3,5)     RC(3,8) RC(3,9)                         RC(3,10)         
         >;
     };
+};
+
+&trackball_listener {
+    status = "okay";
+    device = <&input_split>;
 };
