@@ -18,11 +18,18 @@
 #
 ---
 include:
-  - board: seeeduino_xiao_ble
-    shield: zonkey_R rgbled_adapter
-  - board: seeeduino_xiao_ble
-    shield: zonkey_L rgbled_adapter
-  - board: seeeduino_xiao_ble
-    shield: settings_reset
-  - board: seeeduino_xiao_ble
+  - board: xiao_ble//zmk
     shield: zonkey_dongle
+    artifact-name: zonkey_dongle
+
+  - board: xiao_ble//zmk
+    shield: zonkey_R rgbled_adapter
+    artifact-name: zonkey_R
+
+  - board: xiao_ble//zmk
+    shield: zonkey_L rgbled_adapter
+    artifact-name: zonkey_L
+
+  - board: xiao_ble//zmk
+    shield: settings_reset
+    artifact-name: xiao_settings_reset
