@@ -19,19 +19,10 @@
 ---
 include:
   - board: seeeduino_xiao_ble
-    shield: zonkey_dongle
-    artifact-name: zonkey_dongle
-
-  - board: seeeduino_xiao_ble
     shield: zonkey_R rgbled_adapter
-    artifact-name: zonkey_R
-    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
-
   - board: seeeduino_xiao_ble
     shield: zonkey_L rgbled_adapter
-    artifact-name: zonkey_L
-    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
-
   - board: seeeduino_xiao_ble
     shield: settings_reset
-    artifact-name: xiao_settings_reset
+  - board: seeeduino_xiao_ble
+    shield: zonkey_dongle
